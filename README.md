@@ -59,7 +59,7 @@ export ARM_CLIENT_SECRET="<service-principal-password>"
 export ARM_TENANT_ID="<azure-tenant-id>"
 export ARM_SUBSCRIPTION_ID="<azure-subscription-id>"
 ```
-**In this example, the required Azure credentials are mapped from a linked variable group defined under DevOps "Pipelines --> Library", which retrieves all credentials as secrets from an Azure KeyVault instance. **
+**In this example, the required Azure credentials are mapped from a linked variable group defined under DevOps "Pipelines --> Library", which retrieves all credentials as secrets from an Azure KeyVault instance.**
 
 ## State Management
 
