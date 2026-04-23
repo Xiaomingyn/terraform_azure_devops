@@ -1,0 +1,153 @@
+trigger:
+ branches:
+   include:
+     - main
+
+pr:
+ branches:
+   include:
+     - main
+
+pool:
+ name: 'YOUR-AGENT-POOL-NAME'
+ vmImage: 'ubuntu-latest'
+
+variables:
+- group: YOUR-KEY-VAULT-VARIABLE-GROUP-NAME 
+- name: terraformWorkingDirectory 
+  value: 'infra'
+- name: terraformVersion
+  value: '1.10.5'
+- name: azureServiceConnection
+  value: 'YOUR-AZURE-SERVICE-CONNECTION-NAME'
+- name: environmentName
+  value: 'prod'
+
+stages:
+ - stage: Validate
+   displayName: 'Validate Terraform'
+   jobs:
+     - job: Validate
+       displayName: 'Run terraform fmt and validate'
+       steps:
+         - checkout: self
+         - task: TerraformInstaller@1
+           displayName: 'Install Terraform'
+           inputs:
+             terraformVersion: '$(terraformVersion)'
+         - task: AzureCLI@2
+           displayName: 'Terraform fmt and validate'
+           inputs:
+             azureSubscription: '$(azureServiceConnection)'
+             addSpnToEnvironment: true
+             scriptType: 'bash'
+             scriptLocation: 'inlineScript'
+             inlineScript: |
+               set -euo pipefail
+               export TF_IN_AUTOMATION=true
+               export ARM_USE_AZUREAD=true
+               export ARM_CLIENT_ID="$ARM_CLIENT_ID"
+               export ARM_TENANT_ID="$ARM_TENANT_ID"
+               export ARM_SUBSCRIPTION_ID="$ARM_SUBSCRIPTION_ID"
+               export ARM_AZURE_SERVICE_CONNECTION_ID="$ARM_AZURE_SERVICE_CONNECTION_ID"
+               cd "$(terraformWorkingDirectory)"
+               terraform init -input=false
+               terraform validate
+           env:
+             ARM_CLIENT_ID: $(YOUR-SERVICE-PRINCIPAL-CLIENT-ID)
+             ARM_CLIENT_SECRET: $(YOUR-SERVICE-PRINCIPAL-CLIENT-SECRET)
+             ARM_TENANT_ID: $(YOUR-TENANT-ID)
+             ARM_SUBSCRIPTION_ID: $(YOUR-SUBSCRIPTION-ID)
+             ARM_AZURE_SERVICE_CONNECTION_ID: $(YOUR-DEVOPS-SERVICE-CONNECTION-ID)
+ - stage: Plan
+   displayName: 'Plan Terraform'
+   dependsOn: Validate
+   jobs:
+     - job: Plan
+       displayName: 'Create Terraform plan'
+       steps:
+         - checkout: self
+         - task: TerraformInstaller@1
+           displayName: 'Install Terraform'
+           inputs:
+             terraformVersion: '$(terraformVersion)'
+         - task: AzureCLI@2
+           displayName: 'Terraform plan'
+           inputs:
+             azureSubscription: '$(azureServiceConnection)'
+             addSpnToEnvironment: true
+             scriptType: 'bash'
+             scriptLocation: 'inlineScript'
+             inlineScript: |
+               set -euo pipefail
+               export TF_IN_AUTOMATION=true
+               export TF_IN_AUTOMATION=true
+               export ARM_USE_AZUREAD=true
+               export ARM_CLIENT_ID="$ARM_CLIENT_ID"
+               export ARM_TENANT_ID="$ARM_TENANT_ID"
+               export ARM_SUBSCRIPTION_ID="$ARM_SUBSCRIPTION_ID"
+               export ARM_AZURE_SERVICE_CONNECTION_ID="$ARM_AZURE_SERVICE_CONNECTION_ID"
+               cd "$(terraformWorkingDirectory)"
+               terraform init -input=false
+               terraform plan -input=false -lock-timeout=300s -out=tfplan -var-file=prod.tfvars
+               terraform show -no-color tfplan > tfplan.txt
+               mkdir -p "$(Build.ArtifactStagingDirectory)/terraform-plan"
+               cp tfplan "$(Build.ArtifactStagingDirectory)/terraform-plan/tfplan"
+               cp tfplan.txt "$(Build.ArtifactStagingDirectory)/terraform-plan/tfplan.txt"
+           env:
+             ARM_CLIENT_ID: $(YOUR-SERVICE-PRINCIPAL-CLIENT-ID)
+             ARM_CLIENT_SECRET: $(YOUR-SERVICE-PRINCIPAL-CLIENT-SECRET)
+             ARM_TENANT_ID: $(YOUR-TENANT-ID)
+             ARM_SUBSCRIPTION_ID: $(YOUR-SUBSCRIPTION-ID)
+             ARM_AZURE_SERVICE_CONNECTION_ID: $(YOUR-DEVOPS-SERVICE-CONNECTION-ID)
+         - publish: '$(Build.ArtifactStagingDirectory)/terraform-plan'
+           artifact: 'terraform-plan'
+           displayName: 'Publish Terraform plan artifact'
+ - stage: Apply
+   displayName: 'Apply Terraform'
+   dependsOn: Plan
+   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+   jobs:
+     - deployment: Apply
+       displayName: 'Apply Terraform to production'
+       environment: '$(environmentName)'
+       strategy:
+         runOnce:
+           deploy:
+             steps:
+               - checkout: self
+               - task: DownloadPipelineArtifact@2
+                 displayName: 'Download Terraform plan artifact'
+                 inputs:
+                   buildType: 'current'
+                   artifactName: 'terraform-plan'
+                   targetPath: '$(Pipeline.Workspace)/terraform-plan'
+               - task: TerraformInstaller@1
+                 displayName: 'Install Terraform'
+                 inputs:
+                   terraformVersion: '$(terraformVersion)'
+               - task: AzureCLI@2
+                 displayName: 'Terraform apply'
+                 inputs:
+                   azureSubscription: '$(azureServiceConnection)'
+                   addSpnToEnvironment: true
+                   scriptType: 'bash'
+                   scriptLocation: 'inlineScript'
+                   inlineScript: |
+                     set -euo pipefail
+                     export TF_IN_AUTOMATION=true
+                     export TF_IN_AUTOMATION=true
+                     export ARM_USE_AZUREAD=true
+                     export ARM_CLIENT_ID="$ARM_CLIENT_ID"
+                     export ARM_TENANT_ID="$ARM_TENANT_ID"
+                     export ARM_SUBSCRIPTION_ID="$ARM_SUBSCRIPTION_ID"
+                     export ARM_AZURE_SERVICE_CONNECTION_ID="$ARM_AZURE_SERVICE_CONNECTION_ID"
+                     cd "$(terraformWorkingDirectory)"
+                     terraform init -input=false
+                     terraform apply -input=false -lock-timeout=300s "$(Pipeline.Workspace)/terraform-plan/tfplan"
+                 env:
+                   ARM_CLIENT_ID: $(YOUR-SERVICE-PRINCIPAL-CLIENT-ID)
+                   ARM_CLIENT_SECRET: $(YOUR-SERVICE-PRINCIPAL-CLIENT-SECRET)
+                   ARM_TENANT_ID: $(YOUR-TENANT-ID)
+                   ARM_SUBSCRIPTION_ID: $(YOUR-SUBSCRIPTION-ID)
+                   ARM_AZURE_SERVICE_CONNECTION_ID: $(YOUR-DEVOPS-SERVICE-CONNECTION-ID)  
