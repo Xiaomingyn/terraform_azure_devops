@@ -1,0 +1,79 @@
+parameters:
+- name: environmentName
+  type: string
+- name: environmentPath
+  type: string
+- name: backendConfigFile
+  type: string
+- name: tfvarsFile
+  type: string
+- name: service_connection
+  type: string
+- name: terraformVersion
+  type: string
+- name: deploy_storage_account
+  type: boolean
+- name: deploy_loganalysticsworkspace
+  type: boolean
+- name: deploy_keyvault
+  type: boolean
+- name: deploy_containerregistry
+  type: boolean
+- name: deploy_applicationInsights
+  type: boolean
+- name: deploy_machinelearning
+  type: boolean
+- name: deploy_synapse
+  type: boolean
+- name: deploy_machinelearningComputeInstance
+  type: boolean
+- name: deploy_machinelearningComputeCluster
+  type: boolean
+- name: deploy_LogicApp
+  type: boolean
+- name: deploy_data_factory
+  type: boolean
+- name: deploy_app_service
+  type: boolean
+- name: deploy_app_service_plan
+  type: boolean
+- name: deploy_cognitive_services
+  type: boolean
+- name: deploy_container_apps
+  type: boolean
+- name: deploy_resource_group
+  type: boolean
+- name: deploy_virtual_network
+  type: boolean
+
+jobs:
+- job: validate_${{ parameters.environmentName }}
+  displayName: Validate ${{ parameters.environmentName }}
+  steps:
+  - template: terraform-common-steps.yml
+    parameters:
+      environmentName: ${{ parameters.environmentName }}
+      environmentPath: ${{ parameters.environmentPath }}
+      tfAction: validate
+      backendConfigFile: ${{ parameters.backendConfigFile }}
+      tfvarsFile: ${{ parameters.tfvarsFile }}
+      service_connection: ${{ parameters.service_connection }}
+      terraformVersion: ${{ parameters.terraformVersion }}
+      deploy_storage_account: ${{ parameters.deploy_storage_account }}
+      deploy_loganalysticsworkspace: ${{ parameters.deploy_loganalysticsworkspace }}
+      deploy_keyvault: ${{ parameters.deploy_keyvault }}
+      deploy_containerregistry: ${{ parameters.deploy_containerregistry }}
+      deploy_applicationInsights: ${{ parameters.deploy_applicationInsights }}
+      deploy_machinelearning: ${{ parameters.deploy_machinelearning }}
+      deploy_synapse: ${{ parameters.deploy_synapse }}
+      deploy_machinelearningComputeInstance: ${{ parameters.deploy_machinelearningComputeInstance }}
+      deploy_machinelearningComputeCluster: ${{ parameters.deploy_machinelearningComputeCluster }}
+      deploy_LogicApp: ${{ parameters.deploy_LogicApp }}
+      deploy_data_factory: ${{ parameters.deploy_data_factory }}
+      deploy_app_service: ${{ parameters.deploy_app_service }}
+      deploy_app_service_plan: ${{ parameters.deploy_app_service_plan }}
+      deploy_cognitive_services: ${{ parameters.deploy_cognitive_services }}
+      deploy_container_apps: ${{ parameters.deploy_container_apps }}
+      deploy_resource_group: ${{ parameters.deploy_resource_group }}
+      deploy_virtual_network: ${{ parameters.deploy_virtual_network }}
+

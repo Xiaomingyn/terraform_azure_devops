@@ -1,0 +1,109 @@
+parameters:
+- name: environmentName
+  type: string
+- name: environmentPath
+  type: string
+- name: backendConfigFile
+  type: string
+- name: tfvarsFile
+  type: string
+- name: service_connection
+  type: string
+- name: terraformVersion
+  type: string  
+- name: deploy_storage_account
+  type: boolean
+- name: deploy_loganalysticsworkspace
+  type: boolean
+- name: deploy_keyvault
+  type: boolean
+- name: deploy_containerregistry
+  type: boolean
+- name: deploy_applicationInsights
+  type: boolean
+- name: deploy_machinelearning
+  type: boolean
+- name: deploy_synapse
+  type: boolean
+- name: deploy_machinelearningComputeInstance
+  type: boolean
+- name: deploy_machinelearningComputeCluster
+  type: boolean
+- name: deploy_LogicApp
+  type: boolean
+- name: deploy_data_factory
+  type: boolean
+- name: deploy_app_service
+  type: boolean
+- name: deploy_app_service_plan
+  type: boolean
+- name: deploy_cognitive_services
+  type: boolean
+- name: deploy_container_apps
+  type: boolean
+- name: deploy_resource_group
+  type: boolean
+- name: deploy_virtual_network
+  type: boolean
+
+
+jobs:
+- job: plan_${{ parameters.environmentName }}
+  displayName: Plan ${{ parameters.environmentName }}
+  steps:
+  - checkout: self
+  - task: TerraformInstaller@1
+    displayName: 'Install Terraform'
+    inputs:
+      terraformVersion: '$(terraformVersion)'
+      displayName: Install Terraform
+  - task: AzureCLI@2
+    displayName: Terraform plan
+    inputs:
+      azureSubscription: $(azureServiceConnectionName)
+      addSpnToEnvironment: true      
+      scriptType: bash
+      scriptLocation: inlineScript
+      workingDirectory: ${{ parameters.environmentPath }}
+      inlineScript: |
+        set -euo pipefail
+        export TF_IN_AUTOMATION=true
+        export ARM_USE_AZUREAD=true
+        export ARM_CLIENT_ID="$(spID)"
+        export ARM_CLIENT_SECRET="$(spSecret)"
+        export ARM_TENANT_ID="$(tenantId)"
+        export ARM_SUBSCRIPTION_ID="$(subscriptionId)"
+        export ARM_AZURE_SERVICE_CONNECTION_ID="$(devops-scrg-ID)"        
+        terraform init -input=false -backend-config=${{ parameters.backendConfigFile }}
+        terraform plan -input=false -lock-timeout=300s -out=tfplan 
+        terraform show -no-color tfplan > tfplan.txt
+        mkdir -p "$(Build.ArtifactStagingDirectory)/terraform-plan"
+        cp tfplan "$(Build.ArtifactStagingDirectory)/terraform-plan/tfplan"
+        cp tfplan.txt "$(Build.ArtifactStagingDirectory)/terraform-plan/tfplan.txt"        
+    env:
+      # Map the YAML parameter to a TF_VAR_ environment variable
+      TF_VAR_tenant_id: $(tenantId)
+      TF_VAR_subscription_id: $(subscriptionId)
+      TF_VAR_client_id: $(spID)
+      TF_VAR_client_secret: $(spSecret)
+      TF_VAR_environment: ${{ parameters.environmentName }}      
+      TF_VAR_deploy_storage_account: ${{ lower(parameters.deploy_storage_account) }}
+      TF_VAR_deploy_loganalysticsworkspace: ${{ lower(parameters.deploy_loganalysticsworkspace) }}
+      TF_VAR_deploy_keyvault: ${{ lower(parameters.deploy_keyvault) }}
+      TF_VAR_deploy_containerregistry: ${{ lower(parameters.deploy_containerregistry) }}
+      TF_VAR_deploy_applicationInsights: ${{ lower(parameters.deploy_applicationInsights) }}
+      TF_VAR_deploy_machinelearning: ${{ lower(parameters.deploy_machinelearning) }}
+      TF_VAR_deploy_synapse: ${{ lower(parameters.deploy_synapse) }}
+      TF_VAR_deploy_machinelearningComputeInstance: ${{ lower(parameters.deploy_machinelearningComputeInstance) }}
+      TF_VAR_deploy_machinelearningComputeCluster: ${{ lower(parameters.deploy_machinelearningComputeCluster) }}
+      TF_VAR_deploy_LogicApp: ${{ lower(parameters.deploy_LogicApp) }}
+      TF_VAR_deploy_data_factory: ${{ lower(parameters.deploy_data_factory) }}
+      TF_VAR_deploy_app_service: ${{ lower(parameters.deploy_app_service) }}
+      TF_VAR_deploy_app_service_plan: ${{ lower(parameters.deploy_app_service_plan) }}
+      TF_VAR_deploy_cognitive_services: ${{ lower(parameters.deploy_cognitive_services) }}
+      TF_VAR_deploy_container_apps: ${{ lower(parameters.deploy_container_apps) }}
+      TF_VAR_deploy_resource_group: ${{ lower(parameters.deploy_resource_group) }}
+      TF_VAR_deploy_virtual_network: ${{ lower(parameters.deploy_virtual_network) }}    
+  - publish: '$(Build.ArtifactStagingDirectory)/terraform-plan'
+    artifact: tfplan-${{ parameters.environmentName }}
+    displayName: 'Publish Terraform plan artifact'
