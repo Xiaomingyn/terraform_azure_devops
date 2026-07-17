@@ -1,12 +1,13 @@
 # General informaiton 
 ## Note: keep these values as short as possible, as they will be used in naming resources.
 ##       If they are too long, terraform prozess will break due to naming constraints.
-organization           = "xctec"
+organization           = "YOUR_ORGANIZATION"
 project                = "infra"
 workload_name          = "analytics"
-location               = "westeurope" # Not used in naming resources
+location               = "DESIRED_AZURE_LOCATION" # Not used in naming resources
 
 # Passing through from DevOps YAML parameter
+## For ducumentation purpose, DO NOT define them here!!!
 #environment                             = "dev"          
 #deploy_storage_account                  = false
 #deploy_loganalysticsworkspace           = false

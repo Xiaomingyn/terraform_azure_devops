@@ -100,7 +100,7 @@ pool:
 variables:
 - group: subscripEnv
 - name: azureServiceConnectionName
-  value: 'SP-rgxctecdev-ado' 
+  value: 'YOUR_DEVOPS_SERVICE_CONNECTION_NAME' 
 - name: terraformVersion
   value: '1.15.8'
 
