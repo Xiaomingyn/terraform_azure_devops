@@ -71,6 +71,9 @@ jobs:
       run:
         working-directory: ./environments/${{ inputs.targetEnvironment }}  # Applies to all "run" steps    
     environment: ${{ inputs.targetEnvironment }}
+    permissions:
+      id-token: write   # Required for requesting the JWT
+      contents: read     # Required for actions/checkout    
     steps:
       - uses: actions/checkout@v6
       - name: Log In to Azure

@@ -70,6 +70,9 @@ jobs:
       run:
         working-directory: ./environments/${{ inputs.targetEnvironment }}  # Applies to all "run" steps in this job    
     environment: ${{ inputs.targetEnvironment }} # Connects to GitHub Environment gates
+    permissions:
+      id-token: write   # Required for requesting the JWT
+      contents: read     # Required for actions/checkout    
     steps:
       - uses: actions/checkout@v6
       - name: Log In to Azure
