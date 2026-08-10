@@ -116,26 +116,26 @@ jobs:
     needs: stage_validate
     uses: ./.github/workflows/plan.yml
     with:
-      targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
-      backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
-      tfvarsFile: ${{ github.event.inputs.tfvarsFile }}
-      deploy_storage_account: ${{ github.event.inputs.deploy_storage_account }}
-      deploy_loganalysticsworkspace: ${{ github.event.inputs.deploy_loganalysticsworkspace }}
-      deploy_keyvault: ${{ github.event.inputs.deploy_keyvault }}
-      deploy_containerregistry: ${{ github.event.inputs.deploy_containerregistry }}
-      deploy_applicationInsights: ${{ github.event.inputs.deploy_applicationInsights }}
-      deploy_machinelearning: ${{ github.event.inputs.deploy_machinelearning }}
-      deploy_synapse: ${{ github.event.inputs.deploy_synapse }}
-      deploy_machinelearningComputeInstance: ${{ github.event.inputs.deploy_machinelearningComputeInstance }}
-      deploy_machinelearningComputeCluster: ${{ github.event.inputs.deploy_machinelearningComputeCluster }}
-      deploy_LogicApps: ${{ github.event.inputs.deploy_LogicApps }}
-      deploy_data_factory: ${{ github.event.inputs.deploy_data_factory }}
-      deploy_app_service: ${{ github.event.inputs.deploy_app_service }}
-      deploy_app_service_plan: ${{ github.event.inputs.deploy_app_service_plan }}
-      deploy_cognitive_services: ${{ github.event.inputs.deploy_cognitive_services }}
-      deploy_container_apps: ${{ github.event.inputs.deploy_container_apps }}
-      deploy_resource_group: ${{ github.event.inputs.deploy_resource_group }}
-      deploy_virtual_network: ${{ github.event.inputs.deploy_virtual_network }}
+      targetEnvironment: ${{ inputs.targetEnvironment }}
+      backendConfigFile: ${{ inputs.backendConfigFile }}
+      tfvarsFile: ${{ inputs.tfvarsFile }}
+      deploy_storage_account: ${{ inputs.deploy_storage_account }}
+      deploy_loganalysticsworkspace: ${{ inputs.deploy_loganalysticsworkspace }}
+      deploy_keyvault: ${{ inputs.deploy_keyvault }}
+      deploy_containerregistry: ${{ inputs.deploy_containerregistry }}
+      deploy_applicationInsights: ${{ inputs.deploy_applicationInsights }}
+      deploy_machinelearning: ${{ inputs.deploy_machinelearning }}
+      deploy_synapse: ${{ inputs.deploy_synapse }}
+      deploy_machinelearningComputeInstance: ${{ inputs.deploy_machinelearningComputeInstance }}
+      deploy_machinelearningComputeCluster: ${{ inputs.deploy_machinelearningComputeCluster }}
+      deploy_LogicApps: ${{ inputs.deploy_LogicApps }}
+      deploy_data_factory: ${{ inputs.deploy_data_factory }}
+      deploy_app_service: ${{ inputs.deploy_app_service }}
+      deploy_app_service_plan: ${{ inputs.deploy_app_service_plan }}
+      deploy_cognitive_services: ${{ inputs.deploy_cognitive_services }}
+      deploy_container_apps: ${{ inputs.deploy_container_apps }}
+      deploy_resource_group: ${{ inputs.deploy_resource_group }}
+      deploy_virtual_network: ${{ inputs.deploy_virtual_network }}
     secrets: inherit # Automatically passes GitHub secrets down to the template
 
   # 3. Run deployment template (Depends on Plan succeeding)
@@ -143,24 +143,24 @@ jobs:
     needs: stage_plan
     uses: ./.github/workflows/apply.yml
     with:
-      targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
-      backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
-      tfvarsFile: ${{ github.event.inputs.tfvarsFile }}
-      deploy_storage_account: ${{ github.event.inputs.deploy_storage_account }}
-      deploy_loganalysticsworkspace: ${{ github.event.inputs.deploy_loganalysticsworkspace }}
-      deploy_keyvault: ${{ github.event.inputs.deploy_keyvault }}
-      deploy_containerregistry: ${{ github.event.inputs.deploy_containerregistry }}
-      deploy_applicationInsights: ${{ github.event.inputs.deploy_applicationInsights }}
-      deploy_machinelearning: ${{ github.event.inputs.deploy_machinelearning }}
-      deploy_synapse: ${{ github.event.inputs.deploy_synapse }}
-      deploy_machinelearningComputeInstance: ${{ github.event.inputs.deploy_machinelearningComputeInstance }}
-      deploy_machinelearningComputeCluster: ${{ github.event.inputs.deploy_machinelearningComputeCluster }}
-      deploy_LogicApps: ${{ github.event.inputs.deploy_LogicApps }}
-      deploy_data_factory: ${{ github.event.inputs.deploy_data_factory }}
-      deploy_app_service: ${{ github.event.inputs.deploy_app_service }}
-      deploy_app_service_plan: ${{ github.event.inputs.deploy_app_service_plan }}
-      deploy_cognitive_services: ${{ github.event.inputs.deploy_cognitive_services }}
-      deploy_container_apps: ${{ github.event.inputs.deploy_container_apps }}
-      deploy_resource_group: ${{ github.event.inputs.deploy_resource_group }}
-      deploy_virtual_network: ${{ github.event.inputs.deploy_virtual_network }}
+      targetEnvironment: ${{ inputs.targetEnvironment }}
+      backendConfigFile: ${{ inputs.backendConfigFile }}
+      tfvarsFile: ${{ inputs.tfvarsFile }}
+      deploy_storage_account: ${{ inputs.deploy_storage_account }}
+      deploy_loganalysticsworkspace: ${{ inputs.deploy_loganalysticsworkspace }}
+      deploy_keyvault: ${{ inputs.deploy_keyvault }}
+      deploy_containerregistry: ${{ inputs.deploy_containerregistry }}
+      deploy_applicationInsights: ${{ inputs.deploy_applicationInsights }}
+      deploy_machinelearning: ${{ inputs.deploy_machinelearning }}
+      deploy_synapse: ${{ inputs.deploy_synapse }}
+      deploy_machinelearningComputeInstance: ${{ inputs.deploy_machinelearningComputeInstance }}
+      deploy_machinelearningComputeCluster: ${{ inputs.deploy_machinelearningComputeCluster }}
+      deploy_LogicApps: ${{ inputs.deploy_LogicApps }}
+      deploy_data_factory: ${{ inputs.deploy_data_factory }}
+      deploy_app_service: ${{ inputs.deploy_app_service }}
+      deploy_app_service_plan: ${{ inputs.deploy_app_service_plan }}
+      deploy_cognitive_services: ${{ inputs.deploy_cognitive_services }}
+      deploy_container_apps: ${{ inputs.deploy_container_apps }}
+      deploy_resource_group: ${{ inputs.deploy_resource_group }}
+      deploy_virtual_network: ${{ inputs.deploy_virtual_network }}
     secrets: inherit
