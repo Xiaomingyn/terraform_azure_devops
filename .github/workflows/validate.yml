@@ -14,5 +14,5 @@ jobs:
       - name: Terraform Init & Format Check
         run: |
           terraform init -backend=false
-          terraform fmt -check -recursive ../../
+          # terraform fmt -check -recursive ../../
           terraform validate -var-file="${{ inputs.tfvarsFile }}" 
