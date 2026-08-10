@@ -66,6 +66,9 @@ on:
 jobs:
   plan:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./environments/${{ inputs.targetEnvironment }}  # Applies to all "run" steps in this job    
     environment: ${{ inputs.targetEnvironment }} # Connects to GitHub Environment gates
     steps:
       - uses: actions/checkout@v6
