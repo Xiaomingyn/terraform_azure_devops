@@ -108,12 +108,12 @@ on:
 jobs:
   # 1. Run validation template
   stage_validate:
-    uses: ./.github/../pipelines/actions/validate.yml
+    uses: ./.github/workflows/../../pipelines/actions/validate.yml
 
   # 2. Run planning template (Depends on Validation succeeding)
   stage_plan:
     needs: stage_validate
-    uses: ./.github/../pipelines/actions/plan.yml
+    uses: ./.github/workflows/../../pipelines/actions/plan.yml
     with:
       targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
       backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
@@ -140,7 +140,7 @@ jobs:
   # 3. Run deployment template (Depends on Plan succeeding)
   stage_apply:
     needs: stage_plan
-    uses: ./.github/../pipelines/actions/apply.yml
+    uses: ./.github/workflows/../../pipelines/actions/apply.yml
     with:
       targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
       backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
