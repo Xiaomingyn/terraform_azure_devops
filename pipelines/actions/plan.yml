@@ -1,0 +1,106 @@
+name: 'Template - Plan'
+
+on:
+  workflow_call:
+    inputs:
+      targetEnvironment:
+        required: true
+        type: string
+      backendConfigFile:
+        required: true
+        type: string
+      tfvarsFile:
+        required: true
+        type: string
+      deploy_storage_account:
+        required: false
+        type: boolean
+      deploy_loganalysticsworkspace:
+        required: false
+        type: boolean
+      deploy_keyvault:
+        required: false
+        type: boolean
+      deploy_containerregistry:
+        required: false
+        type: boolean
+      deploy_applicationInsights:
+        required: false
+        type: boolean
+      deploy_machinelearning:
+        required: false
+        type: boolean
+      deploy_synapse:
+        required: false
+        type: boolean
+      deploy_machinelearningComputeInstance:
+        required: false
+        type: boolean
+      deploy_machinelearningComputeCluster:
+        required: false
+        type: boolean
+      deploy_LogicApp:
+        required: false
+        type: boolean
+      deploy_data_factory:
+        required: false
+        type: boolean
+      deploy_app_service:
+        required: false
+        type: boolean
+      deploy_app_service_plan:
+        required: false
+        type: boolean
+      deploy_cognitive_services:
+        required: false
+        type: boolean
+      deploy_container_apps:
+        required: false
+        type: boolean
+      deploy_resource_group:
+        required: false
+        type: boolean
+      deploy_virtual_network:
+        required: false
+        type: boolean
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.targetEnvironment }} # Connects to GitHub Environment gates
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log In to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ variables.TERRAFORM_VERSION }}
+      - name: Terraform Init & Plan
+        run: |
+          terraform init -backend-config=${{ inputs.backendConfigFile }}
+          terraform plan -input=false -lock-timeout=300s -out=tfplan
+        env:
+          TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_environment: ${{ inputs.targetEnvironment }}      
+          TF_VAR_deploy_storage_account: ${{ inputs.deploy_storage_account }}
+          TF_VAR_deploy_loganalysticsworkspace: ${{ inputs.deploy_loganalysticsworkspace }}
+          TF_VAR_deploy_keyvault: ${{ inputs.deploy_keyvault }}
+          TF_VAR_deploy_containerregistry: ${{ inputs.deploy_containerregistry }}
+          TF_VAR_deploy_applicationInsights: ${{ inputs.deploy_applicationInsights }}
+          TF_VAR_deploy_machinelearning: ${{ inputs.deploy_machinelearning }}
+          TF_VAR_deploy_synapse: ${{ inputs.deploy_synapse }}
+          TF_VAR_deploy_machinelearningComputeInstance: ${{ inputs.deploy_machinelearningComputeInstance }}
+          TF_VAR_deploy_machinelearningComputeCluster: ${{ inputs.deploy_machinelearningComputeCluster }}
+          TF_VAR_deploy_LogicApp: ${{ inputs.deploy_LogicApp }}
+          TF_VAR_deploy_data_factory: ${{ inputs.deploy_data_factory }}
+          TF_VAR_deploy_app_service: ${{ inputs.deploy_app_service }}
+          TF_VAR_deploy_app_service_plan: ${{ inputs.deploy_app_service_plan }}
+          TF_VAR_deploy_cognitive_services: ${{ inputs.deploy_cognitive_services }}
+          TF_VAR_deploy_container_apps: ${{ inputs.deploy_container_apps }}
+          TF_VAR_deploy_resource_group: ${{ inputs.deploy_resource_group }}
+          TF_VAR_deploy_virtual_network: ${{ inputs.deploy_virtual_network }}  
