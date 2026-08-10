@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ variables.TERRAFORM_VERSION }}
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
       - name: Terraform Init & Format Check
         run: |
           terraform init -backend=false

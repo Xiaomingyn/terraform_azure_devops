@@ -77,7 +77,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ variables.TERRAFORM_VERSION }}
+          terraform_version: ${{ vars.TERRAFORM_VERSION }}
       - name: Terraform Init & Plan
         run: |
           terraform init -backend-config=${{ inputs.backendConfigFile }}
