@@ -1,0 +1,166 @@
+name: 'Main Infrastructure Deployment'
+
+on:
+  workflow_dispatch:
+  # A run workflow button will be available in the GitHub Actions tab for this repository
+    inputs:
+      targetEnvironment:
+      # specialized dropdown for environment selection
+      ## automatically populated with GitHub repo environment
+        description: 'Select target deployment environment'
+        required: true
+        type: environment
+      backendConfigFile:
+        description: 'Backend configuration file for Terraform'
+        required: true
+        type: string
+        default: 'backend.hcl'
+      tfvarsFile:
+        description: 'Terraform variables file'
+        required: true
+        type: string
+        default: 'terraform.tfvars'
+      deploy_storage_account:
+        description: 'Deploy Storage Account'
+        required: false
+        type: boolean
+        default: false
+      deploy_loganalysticsworkspace:
+        description: 'Deploy Log Analytics Workspace'
+        required: false
+        type: boolean
+        default: false
+      deploy_keyvault:
+        description: 'Deploy Keyvault'
+        required: false
+        type: boolean
+        default: false
+      deploy_containerregistry:
+        description: 'Deploy Container Registry'
+        required: false
+        type: boolean
+        default: false
+      deploy_applicationInsights:
+        description: 'Deploy Application Insights'
+        required: false
+        type: boolean
+        default: false
+      deploy_machinelearning:
+        description: 'Deploy Machine Learning'
+        required: false
+        type: boolean
+        default: false
+      deploy_synapse:
+        description: 'Deploy Synapse'
+        required: false
+        type: boolean
+        default: false
+      deploy_machinelearningComputeInstance:
+        description: 'Deploy Machine Learning Compute Instance'
+        required: false
+        type: boolean
+        default: false
+      deploy_machinelearningComputeCluster:
+        description: 'Deploy Machine Learning Compute Cluster'
+        required: false
+        type: boolean
+        default: false
+      deploy_LogicApps:
+        description: 'Deploy Logic Apps'
+        required: false
+        type: boolean
+        default: false
+      deploy_data_factory:
+        description: 'Deploy Data Factory'
+        required: false
+        type: boolean
+        default: false
+      deploy_app_service:
+        description: 'Deploy App Service'
+        required: false
+        type: boolean
+        default: false
+      deploy_app_service_plan:
+        description: 'Deploy App Service Plan'
+        required: false
+        type: boolean
+        default: false
+      deploy_cognitive_services:
+        description: 'Deploy Cognitive Services'
+        required: false
+        type: boolean
+        default: false
+      deploy_container_apps:
+        description: 'Deploy Container Apps'
+        required: false
+        type: boolean
+        default: false
+      deploy_resource_group:
+        description: 'Deploy Resource Group'
+        required: false
+        type: boolean
+        default: false    
+      deploy_virtual_network:
+        description: 'Deploy Virtual Network'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  # 1. Run validation template
+  stage_validate:
+    uses: ./.github/workflows/validate.yml
+
+  # 2. Run planning template (Depends on Validation succeeding)
+  stage_plan:
+    needs: stage_validate
+    uses: ./.github/workflows/plan.yml
+    with:
+      targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
+      backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
+      tfvarsFile: ${{ github.event.inputs.tfvarsFile }}
+      deploy_storage_account: ${{ github.event.inputs.deploy_storage_account }}
+      deploy_loganalysticsworkspace: ${{ github.event.inputs.deploy_loganalysticsworkspace }}
+      deploy_keyvault: ${{ github.event.inputs.deploy_keyvault }}
+      deploy_containerregistry: ${{ github.event.inputs.deploy_containerregistry }}
+      deploy_applicationInsights: ${{ github.event.inputs.deploy_applicationInsights }}
+      deploy_machinelearning: ${{ github.event.inputs.deploy_machinelearning }}
+      deploy_synapse: ${{ github.event.inputs.deploy_synapse }}
+      deploy_machinelearningComputeInstance: ${{ github.event.inputs.deploy_machinelearningComputeInstance }}
+      deploy_machinelearningComputeCluster: ${{ github.event.inputs.deploy_machinelearningComputeCluster }}
+      deploy_LogicApps: ${{ github.event.inputs.deploy_LogicApps }}
+      deploy_data_factory: ${{ github.event.inputs.deploy_data_factory }}
+      deploy_app_service: ${{ github.event.inputs.deploy_app_service }}
+      deploy_app_service_plan: ${{ github.event.inputs.deploy_app_service_plan }}
+      deploy_cognitive_services: ${{ github.event.inputs.deploy_cognitive_services }}
+      deploy_container_apps: ${{ github.event.inputs.deploy_container_apps }}
+      deploy_resource_group: ${{ github.event.inputs.deploy_resource_group }}
+      deploy_virtual_network: ${{ github.event.inputs.deploy_virtual_network }}
+    secrets: inherit # Automatically passes GitHub secrets down to the template
+
+  # 3. Run deployment template (Depends on Plan succeeding)
+  stage_apply:
+    needs: stage_plan
+    uses: ./.github/workflows/apply.yml
+    with:
+      targetEnvironment: ${{ github.event.inputs.targetEnvironment }}
+      backendConfigFile: ${{ github.event.inputs.backendConfigFile }}
+      tfvarsFile: ${{ github.event.inputs.tfvarsFile }}
+      deploy_storage_account: ${{ github.event.inputs.deploy_storage_account }}
+      deploy_loganalysticsworkspace: ${{ github.event.inputs.deploy_loganalysticsworkspace }}
+      deploy_keyvault: ${{ github.event.inputs.deploy_keyvault }}
+      deploy_containerregistry: ${{ github.event.inputs.deploy_containerregistry }}
+      deploy_applicationInsights: ${{ github.event.inputs.deploy_applicationInsights }}
+      deploy_machinelearning: ${{ github.event.inputs.deploy_machinelearning }}
+      deploy_synapse: ${{ github.event.inputs.deploy_synapse }}
+      deploy_machinelearningComputeInstance: ${{ github.event.inputs.deploy_machinelearningComputeInstance }}
+      deploy_machinelearningComputeCluster: ${{ github.event.inputs.deploy_machinelearningComputeCluster }}
+      deploy_LogicApps: ${{ github.event.inputs.deploy_LogicApps }}
+      deploy_data_factory: ${{ github.event.inputs.deploy_data_factory }}
+      deploy_app_service: ${{ github.event.inputs.deploy_app_service }}
+      deploy_app_service_plan: ${{ github.event.inputs.deploy_app_service_plan }}
+      deploy_cognitive_services: ${{ github.event.inputs.deploy_cognitive_services }}
+      deploy_container_apps: ${{ github.event.inputs.deploy_container_apps }}
+      deploy_resource_group: ${{ github.event.inputs.deploy_resource_group }}
+      deploy_virtual_network: ${{ github.event.inputs.deploy_virtual_network }}
+    secrets: inherit
