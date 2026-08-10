@@ -2,6 +2,7 @@ name: 'Main Infrastructure Deployment'
 
 on:
   workflow_dispatch:
+  # A run workflow button will be available in the GitHub Actions tab for this repository
     inputs:
       targetEnvironment:
       # specialized dropdown for environment selection
