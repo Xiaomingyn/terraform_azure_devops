@@ -39,7 +39,7 @@ on:
       deploy_machinelearningComputeCluster:
         required: false
         type: boolean
-      deploy_LogicApp:
+      deploy_LogicApps:
         required: false
         type: boolean
       deploy_data_factory:
@@ -97,7 +97,7 @@ jobs:
           TF_VAR_deploy_synapse: ${{ inputs.deploy_synapse }}
           TF_VAR_deploy_machinelearningComputeInstance: ${{ inputs.deploy_machinelearningComputeInstance }}
           TF_VAR_deploy_machinelearningComputeCluster: ${{ inputs.deploy_machinelearningComputeCluster }}
-          TF_VAR_deploy_LogicApp: ${{ inputs.deploy_LogicApp }}
+          TF_VAR_deploy_LogicApps: ${{ inputs.deploy_LogicApps }}
           TF_VAR_deploy_data_factory: ${{ inputs.deploy_data_factory }}
           TF_VAR_deploy_app_service: ${{ inputs.deploy_app_service }}
           TF_VAR_deploy_app_service_plan: ${{ inputs.deploy_app_service_plan }}
