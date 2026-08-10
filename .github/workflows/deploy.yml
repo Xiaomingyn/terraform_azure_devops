@@ -106,6 +106,10 @@ on:
         type: boolean
         default: false
 
+defaults:
+  run:
+    working-directory: ./environments/${{ github.event.inputs.targetEnvironment }}  # Applies to all jobs and all steps
+
 jobs:
   # 1. Run validation template
   stage_validate:
