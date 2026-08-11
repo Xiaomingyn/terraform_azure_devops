@@ -92,6 +92,7 @@ jobs:
           TF_VAR_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
           TF_VAR_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_VAR_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          TF_VAR_client_secret: ' ' # Set to a blank string as we are using OIDC for authentication
           TF_VAR_environment: ${{ inputs.targetEnvironment }}      
           TF_VAR_deploy_storage_account: ${{ inputs.deploy_storage_account }}
           TF_VAR_deploy_loganalysticsworkspace: ${{ inputs.deploy_loganalysticsworkspace }}
@@ -102,7 +103,7 @@ jobs:
           TF_VAR_deploy_synapse: ${{ inputs.deploy_synapse }}
           TF_VAR_deploy_machinelearningComputeInstance: ${{ inputs.deploy_machinelearningComputeInstance }}
           TF_VAR_deploy_machinelearningComputeCluster: ${{ inputs.deploy_machinelearningComputeCluster }}
-          TF_VAR_deploy_LogicApps: ${{ inputs.deploy_LogicApps }}
+          TF_VAR_deploy_LogicApp: ${{ inputs.deploy_LogicApps }}
           TF_VAR_deploy_data_factory: ${{ inputs.deploy_data_factory }}
           TF_VAR_deploy_app_service: ${{ inputs.deploy_app_service }}
           TF_VAR_deploy_app_service_plan: ${{ inputs.deploy_app_service_plan }}

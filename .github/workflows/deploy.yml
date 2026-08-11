@@ -114,6 +114,9 @@ jobs:
   # 2. Run planning template (Depends on Validation succeeding)
   stage_plan:
     needs: stage_validate
+    permissions:
+      id-token: write   # Required for requesting the JWT
+      contents: read     # Required for actions/checkout     
     uses: ./.github/workflows/plan.yml
     with:
       targetEnvironment: ${{ inputs.targetEnvironment }}
@@ -141,6 +144,9 @@ jobs:
   # 3. Run deployment template (Depends on Plan succeeding)
   stage_apply:
     needs: stage_plan
+    permissions:
+      id-token: write   # Required for requesting the JWT
+      contents: read     # Required for actions/checkout      
     uses: ./.github/workflows/apply.yml
     with:
       targetEnvironment: ${{ inputs.targetEnvironment }}
