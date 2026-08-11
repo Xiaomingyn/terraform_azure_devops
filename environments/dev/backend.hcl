@@ -1,5 +1,5 @@
 use_oidc             = true
 use_azuread_auth     = true
-storage_account_name = "YOUR_TARGET_STORAGE"
-container_name       = "tfstateyour_target_container"
+storage_account_name = "xctecdevasa1"
+container_name       = "tfstate"
 key                  = "terraform-azure-devops/dev.terraform.tfstate"
